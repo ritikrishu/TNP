@@ -85,6 +85,7 @@
 
         <!--Gmail Related Services-->
         <receiver android:name="android.tnp.services.GmailSendService"/>
+        <service android:name="android.tnp.services.GetChat"/>
     </application>
 
 </manifest>
