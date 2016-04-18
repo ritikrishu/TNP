@@ -20,6 +20,7 @@ import android.tnp.DAO.BeanPlacementData;
 import android.tnp.DAO.CreateDB;
 import android.tnp.chat.ChatActivity;
 import android.tnp.server.database.FetchPlacementData;
+import android.tnp.services.GetChat;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;

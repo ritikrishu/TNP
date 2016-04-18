@@ -28,6 +28,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         this.context=context;
         if (isNetworkAvailable()){
             storeContent();
+            context.startService(new Intent(context,GetChat.class));
         }
     }
 
