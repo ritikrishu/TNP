@@ -179,11 +179,11 @@ public class HomeActivity  extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_search) {
-//            Toast.makeText(this.getBaseContext(),"Search Disabled",Toast.LENGTH_LONG).show();
-//
-//            return true;
-//        }
+        if (id == R.id.action_search) {
+            Toast.makeText(this.getBaseContext(),"Search Disabled",Toast.LENGTH_LONG).show();
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
