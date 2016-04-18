@@ -1,5 +1,7 @@
 package android.tnp.activities;
 
+import android.accounts.AccountManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,11 +31,27 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.gmail.GmailScopes;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class HomeActivity  extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener  , Serializable {
+    GoogleAccountCredential mCredential;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    private static final String[] SCOPES = {GmailScopes.MAIL_GOOGLE_COM};
+    private static final String PREF_ACCOUNT_NAME = "accountName";
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+
+
     SearchView searchView;
     DrawerLayout drawer;
     SharedPreferences sp;
@@ -48,6 +66,20 @@ public class HomeActivity  extends AppCompatActivity
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.home);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        //request gmail account
+        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff())
+                .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+        if(settings.getString(PREF_ACCOUNT_NAME,null) == null)
+            new Thread() {
+                @Override
+                public void run() {
+                    chooseAccount();
+                }
+            }.start();
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -260,4 +292,71 @@ public class HomeActivity  extends AppCompatActivity
 
     }
 
+
+
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    isGooglePlayServicesAvailable();
+                }
+                break;
+            case REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    String accountName =
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        mCredential.setSelectedAccountName(accountName);
+                        SharedPreferences sharedPreferences = getSharedPreferences(PREF_ACCOUNT_NAME,MODE_PRIVATE);
+                        SharedPreferences settings =
+                                getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+                        editor = sharedPreferences.edit();
+                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.apply();
+
+                    }
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(HomeActivity.this,"Account unspecified.",Toast.LENGTH_LONG).show();
+                }
+                break;
+            case REQUEST_AUTHORIZATION:
+                if (resultCode != RESULT_OK) {
+                    chooseAccount();
+                }
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void chooseAccount(){
+        startActivityForResult(
+                mCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+    }
+
+    private boolean isGooglePlayServicesAvailable() {
+        final int connectionStatusCode =
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+            return false;
+        } else if (connectionStatusCode != ConnectionResult.SUCCESS) {
+            return false;
+        }
+        return true;
+    }
+    void showGooglePlayServicesAvailabilityErrorDialog(
+            final int connectionStatusCode) {
+        Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                connectionStatusCode,
+                HomeActivity.this,
+                REQUEST_GOOGLE_PLAY_SERVICES);
+        dialog.show();
+    }
 }
