@@ -30,8 +30,6 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-
         </activity>
         <activity android:name="android.tnp.chat.ChatActivity">
             <meta-data
@@ -97,6 +95,15 @@
 
         <service android:name="android.tnp.services.GetChat" />
 
+        <activity
+            android:name="android.tnp.activities.SearchActivity"
+            android:label="@string/title_activity_search"
+            android:parentActivityName="android.tnp.activities.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.tnp.activities.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

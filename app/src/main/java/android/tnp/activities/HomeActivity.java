@@ -179,12 +179,11 @@ public class HomeActivity  extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_search) {
-//            Toast.makeText(this.getBaseContext(),"Search Disabled",Toast.LENGTH_LONG).show();
-//
-//            return true;
-//        }
+        if (id == R.id.action_search) {
+            startActivity(new Intent(HomeActivity.this, SearchActivity.class));
+
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
