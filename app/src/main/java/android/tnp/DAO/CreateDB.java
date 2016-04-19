@@ -82,6 +82,12 @@ public class CreateDB extends SQLiteOpenHelper {
         return result;
     }
 
+    public Cursor getSearchResult(String query){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("SELECT * FROM "+ TABLEDISPLAY+" WHERE SUBJECT LIKE '%" + query +
+                "%' OR DATA LIKE '%" + query + "%' ORDER BY ID DESC",null);
+        return result;
+    }
     public Cursor getChatData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM "+ TABLECHAT,null);
