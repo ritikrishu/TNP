@@ -41,7 +41,7 @@ public class GmailSendService extends BroadcastReceiver {
     public GmailSendService() {
         super();
     }
-    private static final String SENDMAILTO = "samtyagi.111@gmail.com";
+    private static final String SENDMAILTO = "sanyamtyagi95@gmail.com";
     private static final String SUBJECT = "T & P query";
     private static Gmail mService;
     private static final String[] SCOPES = {GmailScopes.MAIL_GOOGLE_COM};

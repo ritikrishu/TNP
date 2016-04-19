@@ -42,7 +42,7 @@ public class CreateDB extends SQLiteOpenHelper {
                DATA+" TEXT)";
         db.execSQL(createQuery);
         createQuery="create table "+TABLECHAT+" ("+MESSAGE+" TEXT," +
-                DATE+" TEXT,"+ISME+" BOOLEAN)";
+                DATE+" TEXT PRIMARY KEY,"+ISME+" BOOLEAN)";
         db.execSQL(createQuery);
     }
 
@@ -65,13 +65,13 @@ public class CreateDB extends SQLiteOpenHelper {
 
         }
     }
-    public void insertChatData(ChatMessage chatMessage){
+    public Long insertChatData(ChatMessage chatMessage){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(MESSAGE,chatMessage.getMessage());
         cv.put(DATE,chatMessage.getDate());
         cv.put(ISME,chatMessage.getIsme());
-        db.insert(TABLECHAT, null, cv);
+        return db.insert(TABLECHAT, null, cv);
     }
 
 

@@ -30,13 +30,13 @@ public class StartUp extends AppCompatActivity{
         }else{
             if(!(sp.getBoolean("created",false))){
 
-                //delete
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setMessage("testing");
-        chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-        chatMessage.setMe(false);
-        CreateDB createDB = new CreateDB(this);
-        createDB.insertChatData(chatMessage);
+//                //delete
+//        ChatMessage chatMessage = new ChatMessage();
+//        chatMessage.setMessage("testing");
+//        chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+//        chatMessage.setMe(false);
+//        CreateDB createDB = new CreateDB(this);
+//        createDB.insertChatData(chatMessage);
                 //delete
 
                 storeContent();

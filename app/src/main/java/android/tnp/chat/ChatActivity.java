@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.g38.tnp.R;
 import android.net.ConnectivityManager;
@@ -12,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.tnp.DAO.CreateDB;
+import android.tnp.activities.HomeActivity;
+import android.tnp.services.GetChat;
 import android.tnp.services.GmailSendService;
 import android.view.View;
 import android.widget.Button;
@@ -38,13 +41,18 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         createDB = new CreateDB(this);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        ChatMessage chatMessage = new ChatMessage();
 //        chatMessage.setMessage("testing");
 //        chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
 //        chatMessage.setMe(false);
 //        createDB.insertChatData(chatMessage);
         initControls();
+        SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putBoolean("flag",true);
+        editor.commit();
+        startService(new Intent(getApplicationContext(),GetChat.class));
     }
     private void initControls() {
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
@@ -56,6 +64,10 @@ public class ChatActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!(isNetworkAvailable())){
+                    Toast.makeText(ChatActivity.this,"No Internet Access\n           Try again.",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String messageText = messageET.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
                     return;
@@ -69,7 +81,7 @@ public class ChatActivity extends AppCompatActivity {
                 messageET.setText("");
                 createDB.insertChatData(chatMessage);
                 displayMessage(chatMessage);
-                sendMail(messageText);
+                sendMail(messageText+"\n\n send from my tnp app");
             }
         });
 
@@ -128,6 +140,12 @@ public class ChatActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager
                 .getActiveNetworkInfo();
         return activeNetworkInfo != null;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
     }
 }
 

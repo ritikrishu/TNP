@@ -2,6 +2,7 @@ package android.tnp.activities;
 
 import android.accounts.AccountManager;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.tnp.DAO.BeanPlacementData;
 import android.tnp.DAO.CreateDB;
@@ -28,7 +30,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -179,11 +180,11 @@ public class HomeActivity  extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search) {
-            Toast.makeText(this.getBaseContext(),"Search Disabled",Toast.LENGTH_LONG).show();
-
-            return true;
-        }
+//        if (id == R.id.action_search) {
+//            Toast.makeText(this.getBaseContext(),"Search Disabled",Toast.LENGTH_LONG).show();
+//
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

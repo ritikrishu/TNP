@@ -13,17 +13,17 @@ public class EmailFilter {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < data.length; i++) {
-            Log.i("if", "infor");
-//                Log.d("test", data.length+"");
+
             if (data[i].contains("Content-Type: text/plain; charset=UTF-8")) {
+           // if(data[i].contains("Date:")){
                 Log.i("if", "infalse");
                 flag = true;
                 continue;
             }
 
             if (flag) {
-                Log.i("if", "intrue");
-                if ((data[i].trim().equalsIgnoreCase("::Disclaimer::"))||(data[i].trim().equalsIgnoreCase("send from my tnp app"))) {
+                if ((data[i].trim().equalsIgnoreCase("::Disclaimer::"))||
+                        (data[i].trim().equalsIgnoreCase("send from my tnp app"))) {
                     break;
                 }
                 result.append(data[i]);
