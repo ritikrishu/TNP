@@ -18,7 +18,7 @@ import android.widget.SearchView;
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
-
+    ArrayAdapter<String> adapter;
     SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,8 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(adapter!=null)
+                   adapter.clear();
                 displayData(newText);
                 return false;
             }
@@ -60,7 +62,7 @@ public class SearchActivity extends AppCompatActivity {
         CreateDB obj = new CreateDB(this);
         final Cursor cursor;
         if (string.equals(""))
-            cursor = obj.getData();
+            return;
         else
             cursor = obj.getSearchResult(string);
         if (cursor.getCount() > 0) {
@@ -72,7 +74,7 @@ public class SearchActivity extends AppCompatActivity {
             do {
                 textString.add(cursor.getString(cursor.getColumnIndex(CreateDB.SUBJECT)));
             } while (cursor.moveToNext());
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+            adapter = new ArrayAdapter<String>(this,
                     android.R.layout.simple_list_item_1, android.R.id.text1, textString);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
