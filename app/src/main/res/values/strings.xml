@@ -28,4 +28,5 @@
     <string name="title_activity_starred">StarredActivity</string>
     <string name="title_activity_test123">Test123</string>
     <string name="title_activity_t12345">T12345</string>
+    <string name="title_activity_search_result">SearchResult</string>
 </resources>

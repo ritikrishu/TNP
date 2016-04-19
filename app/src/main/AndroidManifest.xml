@@ -30,8 +30,14 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+
         </activity>
-        <activity android:name="android.tnp.chat.ChatActivity" />
+        <activity android:name="android.tnp.chat.ChatActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="android.tnp.activities.HomeActivity" />
+        </activity>
         <activity
             android:name="android.tnp.activities.DetailsActivity"
             android:label="@string/app_name"
@@ -86,10 +92,11 @@
             </intent-filter>
         </receiver>
 
+        <!-- Gmail Related Services -->
+        <receiver android:name="android.tnp.services.GmailSendService" />
 
-        <!--Gmail Related Services-->
-        <receiver android:name="android.tnp.services.GmailSendService"/>
-        <service android:name="android.tnp.services.GetChat"/>
+        <service android:name="android.tnp.services.GetChat" />
+
     </application>
 
 </manifest>

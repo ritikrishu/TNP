@@ -1,10 +1,20 @@
 package android.tnp.services;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.g38.tnp.R;
 import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
+import android.tnp.DAO.CreateDB;
+import android.tnp.activities.StartUp;
+import android.tnp.chat.ChatActivity;
+import android.tnp.chat.ChatAdapter;
+import android.tnp.chat.ChatMessage;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,12 +32,14 @@ import com.google.api.services.gmail.model.Message;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -39,6 +51,7 @@ import javax.mail.internet.MimeMessage;
  * Created by ritik on 4/15/2016.
  */
 public class GetChat extends IntentService {
+    private ChatAdapter adapter;
     GoogleAccountCredential mCredential;
     private static final String[] SCOPES = {GmailScopes.MAIL_GOOGLE_COM};
     private static final String PREF_ACCOUNT_NAME = "accountName";
@@ -49,7 +62,7 @@ public class GetChat extends IntentService {
     }
 
     // # this is supposed to be vikrams' email id
-    private static final String SPECIFIEDEMAILIDFORCHATACTIVITY = "ritikrishu@gmail.com";
+    private static final String SPECIFIEDEMAILIDFORCHATACTIVITY = "sanyamtyagi95@gmail.com";
 
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -84,8 +97,35 @@ public class GetChat extends IntentService {
                 // you need to use the list below-------
                 try {
                     List<MessageAndDate> list = getMsgFromSpecificUser();
+                    if(list!=null){
                     Collections.sort(list , forShorting);
-                    Log.e("testLastMailTime",list.get(list.size()-1).date);
+                    CreateDB createDB=new CreateDB(getApplicationContext()) ;
+                    ChatMessage chatMessage;
+                        Boolean flag;
+                        SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+                        flag=sharedPreferences.getBoolean("flag",false);
+                    for(int i=0;i<list.size();i++){
+                        chatMessage = new ChatMessage();
+                        chatMessage.setMessage(list.get(i).mail);
+                        chatMessage.setDate(list.get(i).date);
+                        chatMessage.setMe(false);
+                        if(!(createDB.insertChatData(chatMessage)==-1)){
+                            if(!(flag))
+                                buildNotification("New Message From TNP",list.get(i).mail);
+                            else {
+                                Intent intent = new Intent(getBaseContext(), ChatActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                getApplication().startActivity(intent);
+                            }
+                        }
+                    }
+                        SharedPreferences.Editor editor=sharedPreferences.edit();
+                        editor.putBoolean("flag",false);
+                        editor.commit();
+
+
+                    }
+
                     /*
                         # Variable "list" is a list of MessageAndDateObject
                         # MessageAndDateobject contains two Strings date in     04/15/2016 23:58:34     <-this format and mail as given by EmailFIlter.filter()
@@ -102,6 +142,9 @@ public class GetChat extends IntentService {
                 List<MessageAndDate> messages = new ArrayList<>();
                 ListMessagesResponse listContainingUnreadMail = mService.users().messages().list(user).setQ("is:unread from:(" + SPECIFIEDEMAILIDFORCHATACTIVITY + ")").execute();
                 byte[] sam;
+                if(listContainingUnreadMail.size()==1) {
+                    return messages;
+                }
                 for (Message message : listContainingUnreadMail.getMessages()){
                     sam = mService.users().messages().get(user, "" + message.getId()).setFormat("raw").execute().decodeRaw();
                     try {
@@ -127,6 +170,19 @@ public class GetChat extends IntentService {
             }
 
         }.start();
+    }
+    private void buildNotification(String title,String msg){
+        Intent notificationIntent = new Intent(getApplicationContext(),ChatActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0,notificationIntent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext()).setSmallIcon(R.drawable.applogo)
+                .setContentTitle(title).setContentText(msg).setAutoCancel(true).setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_SOUND);
+
+
+        NotificationManager notificationmanager = (NotificationManager) getApplicationContext()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationmanager.notify(0, builder.build());
     }
 }
 
