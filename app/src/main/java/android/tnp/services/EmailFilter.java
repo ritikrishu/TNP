@@ -1,7 +1,5 @@
 package android.tnp.services;
 
-import android.util.Log;
-
 /**
  * Created by SANYAM TYAGI on 2/12/2016.
  */
@@ -16,14 +14,13 @@ public class EmailFilter {
 
             if (data[i].contains("Content-Type: text/plain; charset=UTF-8")) {
            // if(data[i].contains("Date:")){
-                Log.i("if", "infalse");
                 flag = true;
                 continue;
             }
 
             if (flag) {
                 if ((data[i].trim().equalsIgnoreCase("::Disclaimer::"))||
-                        (data[i].trim().equalsIgnoreCase("send from my tnp app"))) {
+                        (data[i].trim().equalsIgnoreCase("--"))) {
                     break;
                 }
                 result.append(data[i]);

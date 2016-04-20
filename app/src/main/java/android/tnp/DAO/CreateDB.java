@@ -4,6 +4,7 @@ package android.tnp.DAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.Html;
@@ -42,7 +43,7 @@ public class CreateDB extends SQLiteOpenHelper {
                DATA+" TEXT)";
         db.execSQL(createQuery);
         createQuery="create table "+TABLECHAT+" ("+MESSAGE+" TEXT," +
-                DATE+" TEXT PRIMARY KEY,"+ISME+" BOOLEAN)";
+                DATE+" TEXT PRIMARY KEY ON CONFLICT IGNORE,"+ISME+" BOOLEAN)";
         db.execSQL(createQuery);
     }
 
@@ -65,7 +66,7 @@ public class CreateDB extends SQLiteOpenHelper {
 
         }
     }
-    public Long insertChatData(ChatMessage chatMessage){
+    public Long insertChatData(ChatMessage chatMessage) throws SQLiteConstraintException{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(MESSAGE,chatMessage.getMessage());
