@@ -68,7 +68,6 @@ public class LoginCheck extends Thread{
                 sb.append(line + "\n");
             }
             isr.close();
-            Log.d("hello", "isr close");
 
             result = sb.toString();
             if(result.length()==0||result.contains("null"))

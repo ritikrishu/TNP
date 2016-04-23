@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.g38.tnp.R;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.WorkerThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,12 +25,14 @@ import android.tnp.DAO.CreateDB;
 import android.tnp.chat.ChatActivity;
 import android.tnp.server.database.FetchPlacementData;
 import android.tnp.services.GetChat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.gmail.GmailScopes;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -52,7 +57,7 @@ public class HomeActivity  extends AppCompatActivity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
-
+public static ImageView ivNewMsg;
 
     SearchView searchView;
     DrawerLayout drawer;
@@ -68,6 +73,7 @@ public class HomeActivity  extends AppCompatActivity
         setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.home);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ivNewMsg=(ImageView)findViewById(R.id.ivNewMsg);
 
         //request gmail account
         SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
@@ -95,11 +101,16 @@ public class HomeActivity  extends AppCompatActivity
        headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
 
         loadData();
+        final SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ivNewMsg.setVisibility(View.GONE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.putBoolean("image",false);
+                editor.commit();
                 startActivity(new Intent(HomeActivity.this, ChatActivity.class));
             }
         });
@@ -137,13 +148,17 @@ public class HomeActivity  extends AppCompatActivity
 
 
         }
+        Log.e("activity", ""+sharedPreferences.getBoolean("image",false));
+
+
 
 
     }
-
     @Override
     protected void onResume() {
         super.onResume();
+        LoadNewMsg loadNewMsg = new LoadNewMsg();
+        loadNewMsg.execute();
         if(!(sp.getBoolean("created",false))){
             storeContent();
             SharedPreferences.Editor editor = sp.edit();
@@ -359,5 +374,48 @@ public class HomeActivity  extends AppCompatActivity
                 HomeActivity.this,
                 REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
+    }
+    class LoadNewMsg extends AsyncTask<Void , Void, Void>{
+        SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            while(!sharedPreferences.getBoolean("servicedone",false)){
+                try {
+                    Thread.sleep(2000);
+                    Log.e("activity", "while");
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                }
+            }
+            //ImageView view = (ImageView)HomeActivity.this.findViewById(R.id.ivNewMsg);
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.putBoolean("flag",true);
+            editor.putBoolean("servicedone",false);
+            editor.commit();
+            startService(new Intent(HomeActivity.this, GetChat.class));
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(sharedPreferences.getBoolean("image",false)){
+                ivNewMsg.setVisibility(View.VISIBLE);
+            }
+            else
+                ivNewMsg.setVisibility(View.GONE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.putBoolean("servicedone",false);
+            editor.apply();
+        }
     }
 }

@@ -32,7 +32,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText messageET;
     private ListView messagesContainer;
     private Button sendBtn;
-    private ChatAdapter adapter;
+    public static ChatAdapter adapter;
     private ArrayList<ChatMessage> chatHistory;
     private CreateDB createDB ;
 
@@ -48,11 +48,11 @@ public class ChatActivity extends AppCompatActivity {
 //        chatMessage.setMe(false);
 //        createDB.insertChatData(chatMessage);
         initControls();
-        SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        editor.putBoolean("flag",true);
-        editor.commit();
-        startService(new Intent(getApplicationContext(),GetChat.class));
+//        SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+//        SharedPreferences.Editor editor=sharedPreferences.edit();
+//        editor.putBoolean("flag",true);
+//        editor.commit();
+//        startService(new Intent(getApplicationContext(),GetChat.class));
     }
     private void initControls() {
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
@@ -81,7 +81,7 @@ public class ChatActivity extends AppCompatActivity {
                 messageET.setText("");
                 createDB.insertChatData(chatMessage);
                 displayMessage(chatMessage);
-                sendMail(messageText+"\n\n send from my tnp app");
+                sendMail(messageText+"\n--\nQuery@TNP Updates");
             }
         });
 

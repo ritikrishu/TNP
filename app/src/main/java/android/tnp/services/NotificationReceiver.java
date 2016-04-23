@@ -14,7 +14,6 @@ import android.tnp.DAO.BeanPlacementData;
 import android.tnp.DAO.CreateDB;
 import android.tnp.activities.StartUp;
 import android.tnp.server.database.FetchPlacementData;
-import android.util.Log;
 
 import java.util.ArrayList;
 

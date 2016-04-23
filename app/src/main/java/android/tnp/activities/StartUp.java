@@ -12,6 +12,7 @@ import android.tnp.DAO.BeanPlacementData;
 import android.tnp.DAO.CreateDB;
 import android.tnp.chat.ChatMessage;
 import android.tnp.server.database.FetchPlacementData;
+import android.tnp.services.GetChat;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -28,6 +29,11 @@ public class StartUp extends AppCompatActivity{
         if (!isNetworkAvailable(getApplicationContext())) {
             Toast.makeText(getApplicationContext(),"No Internet Connection.",Toast.LENGTH_LONG).show();
         }else{
+            SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+//            editor.putBoolean("flag",true);
+//            editor.commit();
+           // startService(new Intent(getApplicationContext(),GetChat.class));
             if(!(sp.getBoolean("created",false))){
 
 //                //delete
@@ -40,7 +46,7 @@ public class StartUp extends AppCompatActivity{
                 //delete
 
                 storeContent();
-                SharedPreferences.Editor editor = sp.edit();
+                editor = sp.edit();
                 editor.putBoolean("created",true);
                 editor.commit();
             }

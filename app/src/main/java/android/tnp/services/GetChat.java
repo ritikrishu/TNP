@@ -8,15 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.g38.tnp.R;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.tnp.DAO.CreateDB;
-import android.tnp.activities.StartUp;
 import android.tnp.chat.ChatActivity;
 import android.tnp.chat.ChatAdapter;
 import android.tnp.chat.ChatMessage;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -32,14 +28,12 @@ import com.google.api.services.gmail.model.Message;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -76,6 +70,7 @@ public class GetChat extends IntentService {
             @Override
             public void run(){
 //                Looper.prepare();
+
                 Comparator<MessageAndDate> forShorting = new Comparator<MessageAndDate>() {
                     @Override
                     public int compare(MessageAndDate lhs, MessageAndDate rhs) {
@@ -113,9 +108,18 @@ public class GetChat extends IntentService {
                             if(!(flag))
                                 buildNotification("New Message From TNP",list.get(i).mail);
                             else {
-                                Intent intent = new Intent(getBaseContext(), ChatActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                getApplication().startActivity(intent);
+//                                Intent intent = new Intent(getBaseContext(), ChatActivity.class);
+//                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                getApplication().startActivity(intent);
+//                                Activity a=(Activity)getApplicationContext();
+//                                ImageView imageView=(ImageView)a.findViewById(R.id.ivNewMsg);
+//                                imageView.setVisibility(View.VISIBLE);
+                                SharedPreferences.Editor editor=sharedPreferences.edit();
+                                editor.putBoolean("image",true);
+
+                                editor.commit();
+
+
                             }
                         }
                     }
@@ -133,9 +137,18 @@ public class GetChat extends IntentService {
                         ::list is shorted in accending order as per date of each mail::
 
                      */
-                } catch (IOException e) {
-                    e.printStackTrace();
+
                 }
+                catch (Exception e){
+                    //kuch nhi
+                    //e.printStackTrace();
+                }
+                finally {
+                    SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    editor.putBoolean("servicedone",true);
+                    editor.commit();
+                    }
             }
             private List<MessageAndDate> getMsgFromSpecificUser() throws IOException{
                 String user = "me";
