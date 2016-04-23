@@ -18,14 +18,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.tnp.DAO.BeanPlacementData;
 import android.tnp.DAO.CreateDB;
 import android.tnp.chat.ChatActivity;
 import android.tnp.server.database.FetchPlacementData;
+import android.tnp.server.database.HomeActivityDataAdapter;
 import android.tnp.services.GetChat;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,7 +62,7 @@ public class HomeActivity  extends AppCompatActivity
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
 public static ImageView ivNewMsg;
-
+    RecyclerView listView;
     SearchView searchView;
     DrawerLayout drawer;
     SharedPreferences sp;
@@ -100,6 +104,8 @@ public static ImageView ivNewMsg;
 
        headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
 
+        listView = (RecyclerView)findViewById(R.id.lvData);
+        listView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
         loadData();
         final SharedPreferences sharedPreferences=getSharedPreferences("caller",MODE_PRIVATE);
 
@@ -273,40 +279,41 @@ public static ImageView ivNewMsg;
 
 
     }
-
     private void displayData() {
-        CreateDB obj = new CreateDB(this);
-        final Cursor cursor=obj.getData();
-        if(cursor.getCount()>0){
-            cursor.moveToFirst();
-//            Toast.makeText(MainActivity.this,"s"+result.getString(0)+result.getString(1),Toast.LENGTH_LONG).show();
-            final ListView listView = (ListView) findViewById(R.id.lvData);
-
-            ArrayList<String> textString = new ArrayList<String>();
-            do{
-                textString.add(cursor.getString(cursor.getColumnIndex(CreateDB.SUBJECT)));
-            }while (cursor.moveToNext());
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                    android.R.layout.simple_list_item_1, android.R.id.text1, textString);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    cursor.moveToFirst();
-                    cursor.move(position);
-                    Intent intent = new Intent(HomeActivity.this, DetailsActivity.class);
-                    intent.putExtra("data", cursor.getString(cursor.getColumnIndex(CreateDB.DATA)));
-                    intent.putExtra("subject", cursor.getString(cursor.getColumnIndex(CreateDB.SUBJECT)));
-                    startActivity(intent);
-                }
-            });
-
-            swipeContainer.setRefreshing(false);
-
-
-        }
-
+        listView.setAdapter(new HomeActivityDataAdapter(HomeActivity.this,getLayoutInflater()));
     }
+//    private void displayData() {
+//        CreateDB obj = new CreateDB(this);
+//        final Cursor cursor=obj.getData();
+//        if(cursor.getCount()>0){
+//            cursor.moveToFirst();
+////            Toast.makeText(MainActivity.this,"s"+result.getString(0)+result.getString(1),Toast.LENGTH_LONG).show();
+//
+//            ArrayList<String> textString = new ArrayList<String>();
+//            do{
+//                textString.add(cursor.getString(cursor.getColumnIndex(CreateDB.SUBJECT)));
+//            }while (cursor.moveToNext());
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                    android.R.layout.simple_list_item_1, android.R.id.text1, textString);
+//            listView.setAdapter(adapter);
+//            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                    cursor.moveToFirst();
+//                    cursor.move(position);
+//                    Intent intent = new Intent(HomeActivity.this, DetailsActivity.class);
+//                    intent.putExtra("data", cursor.getString(cursor.getColumnIndex(CreateDB.DATA)));
+//                    intent.putExtra("subject", cursor.getString(cursor.getColumnIndex(CreateDB.SUBJECT)));
+//                    startActivity(intent);
+//                }
+//            });
+//
+//            swipeContainer.setRefreshing(false);
+//
+//
+//        }
+//
+//    }
 
 
 

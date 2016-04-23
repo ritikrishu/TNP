@@ -77,6 +77,16 @@ public class CreateDB extends SQLiteOpenHelper {
 
 
 
+    public static ArrayList<String> getDataForHomeActivity(SQLiteDatabase db){
+        ArrayList<String> arrayList = new ArrayList<>();
+        Cursor cursor = db.query(TABLEDISPLAY, new String[]{SUBJECT},null,null,null,null,"ID DESC");
+        while (cursor.moveToNext())
+            arrayList.add(cursor.getString(0));
+        cursor.close();
+        return arrayList;
+    }
+
+
     public Cursor getData(){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor result = db.rawQuery("SELECT * FROM "+ TABLEDISPLAY+" ORDER BY ID DESC",null);
