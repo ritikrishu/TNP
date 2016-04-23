@@ -45,4 +45,5 @@ dependencies {
     }
     compile 'com.google.api-client:google-api-client:1.19.1'
     compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
 }
