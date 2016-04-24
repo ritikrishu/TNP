@@ -70,6 +70,10 @@ public class SignUp extends AppCompatActivity implements AdapterView.OnItemSelec
             @Override
             public void onClick(View v) {
 
+                if(!(StartUp.isNetworkAvailable(getApplicationContext()))){
+                    Toast.makeText(getApplicationContext(),"No Internet Access.",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 validatePhone();
                 if(submitFlag){
 
@@ -83,7 +87,9 @@ public class SignUp extends AppCompatActivity implements AdapterView.OnItemSelec
                     Thread thread = new Thread() {
                         public void run() {
                             try {
-                                startActivity(new Intent(SignUp.this,Login.class));
+                                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

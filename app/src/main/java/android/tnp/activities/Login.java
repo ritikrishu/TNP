@@ -36,13 +36,19 @@ public class Login extends AppCompatActivity  {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!(StartUp.isNetworkAvailable(getApplicationContext()))){
+                    Toast.makeText(getApplicationContext(),"No Internet Access.",Toast.LENGTH_LONG).show();
+                    return;
+                }
                 rollno=(EditText)findViewById(R.id.tRollno);
                 password=(EditText)findViewById(R.id.tPassword);
                 if(rollno.getText().toString().length()==0||password.getText().toString().length()==0)
                     Toast.makeText(Login.this, "Can not be Empty", Toast.LENGTH_SHORT).show();
                 else {
                     if(check(rollno.getText().toString(),password.getText().toString())){
-                        startActivity(new Intent("android.tnp.activities.HomeActivity"));
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                        finish();
                     }
                     else{
                         rollno=(EditText)findViewById(R.id.tRollno);
@@ -100,7 +106,9 @@ public class Login extends AppCompatActivity  {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        startActivity(new Intent("android.tnp.activities.SignUp"));
+        Intent intent = new Intent(getApplicationContext(), SignUp.class);
+        startActivity(intent);
+        finish();
         return false;
     }
 
