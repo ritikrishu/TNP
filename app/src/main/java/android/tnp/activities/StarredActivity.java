@@ -12,9 +12,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.tnp.DAO.BeanPlacementData;
 import android.tnp.chat.ChatActivity;
+import android.tnp.server.database.StarredList;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +38,7 @@ public class StarredActivity extends AppCompatActivity
     SearchView searchView;
     DrawerLayout drawer;
     View headerView;
+    RecyclerView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +54,8 @@ public class StarredActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        listView = (RecyclerView)findViewById(R.id.lvData);
+        listView.setLayoutManager(new LinearLayoutManager(StarredActivity.this));
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         headerView = navigationView.inflateHeaderView(R.layout.nav_header_home);
@@ -73,7 +78,8 @@ public class StarredActivity extends AppCompatActivity
                 swipeContainer.setRefreshing(false);
             }
         });
-        displayContent();
+
+//        displayContent();
     }
 
 
@@ -206,6 +212,7 @@ public class StarredActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        displayContent();
+//        displayContent();
+        listView.setAdapter(new StarredList(StarredActivity.this, getLayoutInflater()));
     }
 }
