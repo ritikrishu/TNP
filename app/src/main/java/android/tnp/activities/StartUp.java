@@ -56,8 +56,10 @@ public class StartUp extends AppCompatActivity{
                 try {
                     Thread.sleep(1000);
                     if(loadData()){
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                        finish();
 
-                        startActivity(new Intent(StartUp.this,HomeActivity.class));
                     }
 
                     else

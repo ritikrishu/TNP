@@ -270,6 +270,7 @@ public static ImageView ivNewMsg;
         if(list.size()>0){
             obj.insertData(list);
             displayData();
+            swipeContainer.setRefreshing(false);
         }
         else
             swipeContainer.setRefreshing(false);
