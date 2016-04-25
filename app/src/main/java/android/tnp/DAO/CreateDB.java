@@ -125,6 +125,7 @@ public class CreateDB extends SQLiteOpenHelper {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < data.length; i++) {
             if (data[i].contains("Cc:")) {
+                result.delete(0,result.length());
                 flag = true;
                 continue;
             }
@@ -133,7 +134,8 @@ public class CreateDB extends SQLiteOpenHelper {
                 if (data[i].trim().equalsIgnoreCase("::Disclaimer::")) {
                     break;
                 }
-                result.append(data[i]);
+
+                    result.append(data[i]);
                 result.append("\n");
             }
 
